@@ -1,27 +1,15 @@
-# Dockerized XNAT
-Use this repository to quickly deploy an [XNAT](https://xnat.org/) instance on [docker](https://www.docker.com/).
-
-
-See the [features/dependency-mgmt](https://github.com/NrgXnat/xnat-docker-compose/tree/features/dependency-mgmt) branch for advanced gradle-based version and plugin management.
+# Dockerized XNAT with SSL
+Use this repository to quickly deploy an [XNAT](https://xnat.org/) instance on [docker](https://www.docker.com/) with SSL certificate.
 
 
 This document contains the following sections:
 
-* [Introduction](#markdown-header-introduction)
 * [Prerequisites](#markdown-header-prerequisites)
 * [Usage](#markdown-header-usage)
 * [Environment variables](#markdown-header-environment-variables)
 * [Mounted Data](#markdown-header-mounted-data)
 * [Troubleshooting](#markdown-header-troubleshooting)
 * [Notes on using the Container Service](#markdown-header-notes-on-using-the-container-service)
-
-## Introduction
-
-This repository contains files to bootstrap XNAT deployment. The build creates three containers:
-
-- **[Tomcat](http://tomcat.apache.org/) + XNAT**: The XNAT web application
-- [**Postgres**](https://www.postgresql.org/): The XNAT database
-- [**nginx**](https://www.nginx.com/): Web proxy sitting in front of XNAT
 
 ## Prerequisites
 
@@ -32,16 +20,16 @@ This repository contains files to bootstrap XNAT deployment. The build creates t
 
 > Note that the name of the environment variable for the XNAT version has changed from `XNAT_VER` to `XNAT_VERSION`. Please update any `env` files you've created previously.
 
-1. Clone the [xnat-docker-compose](https://github.com/NrgXnat/xnat-docker-compose) repository.)
+1. Clone the [xnat-docker](https://github.com/AlirzSp1/xnat-docker) repository.
 
 ```
-$ git clone https://github.com/NrgXnat/xnat-docker-compose
-$ cd xnat-docker-compose
+git clone https://github.com/AlirzSp1/xnat-docker
+cd xnat-docker
 ```
 
 2. Set Docker enviroment variables: Default and sample enviroment variables are provided in the `default.env` file. Add these variables to your environment or simply copy `default.env` to `.env` . Values in this file are used to populate dollar-notation variables in the docker-compose.yml file.
 ```
-$ cp default.env .env
+cp default.env .env
 ```
 
 3. Configurations: The default configuration is sufficient to run the deployment. The following files can be modified if you want to change the default configuration
@@ -89,7 +77,7 @@ xnat-web_1    | INFO: Server startup in 84925 ms
 
 5. First XNAT Site Setup
 
-Your XNAT will soon be available at http://localhost. 
+Your XNAT will soon be available at https://localhost. 
 
 After logging in with credentials admin/admin (username/password resp.) the setup page is displayed.
 
@@ -212,29 +200,3 @@ $ docker-compose build xnat-web
 
 It is possible that you will need to use the `--no-cache` argument, if you have only changed local files and not the `Dockerfile` itself.
 
-## Notes on using the Container Service
-
-The Container Service plugin needs some additional configuration to use with the XNAT created by this project.
-
-### Path Translation
-Short answer: Set up [Path Translation](https://wiki.xnat.org/display/CS/Path+Translation).
-
-First, a bit of background on the problem that arises. The container service connects to the docker socket in the xnat-web container which, by default, is mounted in from the host. When you launch a container from XNAT, the container service will run that container on your host machine. One of the key requirements of the container service is that the XNAT archive and build spaces be available wherever the containers run. That shouldn't be a problem, because they *are* available on your host machine and inside the container since we have mounted them in. Right? Well, the problem is that the archive and build space inside the xnat-web container are at different paths than they are on your host machine. When the container service wants to mount files inside the archive, it finds the path under `/data/xnat/archive`; then it tells docker *on your host machine* to mount files at `/data/xnat/archive`. But on your host machine, the files are not there.
-
-We can solve this problem in two ways:
-
-* In container service versions greater that 1.5.1 you can set *Path Translation* on your docker host. Go to the container service settings `Administer → Plugin Settings → Container Server Setup` and edit the Docker Host settings. There you can set a path prefix on your XNAT server—which, in our example, is `/data/xnat`—and the matching path prefix on your docker server—in the example this is the path on the local host; in my speicifc case this is `/Users/flavin/code/xnat-docker-compose/xnat-data` but you path will likely vary. When the container service finds a path to files in the archive, it substitutes the path prefix before telling docker what to mount. See the wiki page on [Path Translation](https://wiki.xnat.org/display/CS/Path+Translation) for more.
-* For prior container service versions, there is no Path Translation. You will need to create directories on your host machine at `/data/xnat/archive` and `/data/xnat/build`. If you already have data in those directories from running XNAT, you can move them. Then, in the `docker-compose.yaml` file in this project, edit the `services → xnat-web → volumes` for the archive and build spaces to `/data/xnat/archive:/data/xnat/archive` and `/data/xnat/build:/data/xnat/build`. Make sure the permissions are set correctly so that your user account haas full read/write/execute permissions on these directories.
-
-### Processing URL
-Short answer: Set your processing URL to `http://host.docker.internal`. See [Processing URL](https://wiki.xnat.org/display/CS/Processing+URL).
-
-When you use this project, your XNAT is available on your host machine at `localhost`. This value is stored in XNAT as the Site URL. When containers run, they use the Site URL to populate the `XNAT_HOST` environment  variable.
-
-But if a container tried to connect to `localhost` it would not see an XNAT. Rather, `localhost` from inside a container just routes back to the container itself! So if the container needs to connect to XNAT at `XNAT_HOST`, we need a way to set something that will allow us to connect from the container back to the host.
-
-If you're using docker for mac or windows, you can use `http://host.docker.internal` to connect from the container to the host. Otherwise you need to you your host's IP address.
-
-And you can set this value inside XNAT as the Processing URL. This setting is used preferentially over the Site URL to set `XNAT_HOST` in a container. Set this value at Administer > Site Administration > Pipeline Settings > Processing URL.
-
-To read essentially all the same information, but perhaps using slightly different words and with a screenshot, see the wiki page: [Processing URL](https://wiki.xnat.org/display/CS/Processing+URL).
