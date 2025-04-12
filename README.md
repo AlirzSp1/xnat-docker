@@ -54,7 +54,7 @@ cp default.env .env
 4. Start the system
 
 ```
-$ docker-compose up -d
+docker-compose up -d
 ```
 
 Note that at this point, if you go to `localhost` you won't see a working web application. It takes upwards of a minute
@@ -147,7 +147,7 @@ NGINX_VERSION | Specifies the [version tag](https://hub.docker.com/_/nginx?tab=t
 Say you want to examine some files in the running `xnat-web` container. You can `exec` a command in that container to open a shell.
 
 ```
-$ docker-compose exec xnat-web bash
+docker-compose exec xnat-web bash
 ```
 
 * The `docker-compose exec` part of the command is what tells docker-compose that you want to execute a command inside a container.
@@ -159,7 +159,7 @@ $ docker-compose exec xnat-web bash
 List available logs
 
 ```
-$ docker-compose exec xnat-web ls /usr/local/tomcat/logs
+docker-compose exec xnat-web ls /usr/local/tomcat/logs
 
 catalina.2018-10-03.log      localhost_access_log.2018-10-03.txt
 host-manager.2018-10-03.log  manager.2018-10-03.log
@@ -169,7 +169,7 @@ localhost.2018-10-03.log
 View a particular log
 
 ```
-$ docker-compose exec xnat-web cat /usr/local/tomcat/logs/catalina.2018-10-03.log
+docker-compose exec xnat-web cat /usr/local/tomcat/logs/catalina.2018-10-03.log
 ```
 
 ### Controlling Instances
@@ -178,20 +178,20 @@ $ docker-compose exec xnat-web cat /usr/local/tomcat/logs/catalina.2018-10-03.lo
 Bring all the instances down by running
 
 ```
-$ docker-compose down
+docker-compose down
 ```
 
 If you want to bring everything down *and* remove all the images that were built, you can run
 
 ```
-$ docker-compose down --rmi all
+docker-compose down --rmi all
 ```
 
 #### Bring up instances
 This will bring all instances up again. The `-d` means "detached" so you won't see any output to the terminal.
 
 ```
-$ docker-compose up -d
+docker-compose up -d
 ```
 
 (If you like seeing the terminal output, you can leave off the `-d` option. The various containers will print output to the terminal as they come up. If you close this connection with `Ctrl+C`, the containers will be stopped or killed.)
@@ -199,14 +199,14 @@ $ docker-compose up -d
 #### Restart
 If an instance is having problems, you can restart it.
 ```
-$ docker-compose restart xnat-web
+docker-compose restart xnat-web
 ```
 
 #### Rebuild after making changes
 If you have changed a `Dockerfile`, you will need to rebuild an image before the changes are picked up.
 
 ```
-$ docker-compose build xnat-web
+docker-compose build xnat-web
 ```
 
 It is possible that you will need to use the `--no-cache` argument, if you have only changed local files and not the `Dockerfile` itself.
