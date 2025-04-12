@@ -38,12 +38,16 @@ cp default.env .env
         * If you want to download a different version of XNAT, you can change the `XNAT_VERSION` variable to some other release.
         * The `TOMCAT_XNAT_FOLDER` build argument is set to `ROOT` by default; this means the XNAT will be available at `http://localhost`. If, instead, you wish it to be at `http://localhost/xnat` or, more generally, at `http://localhost/{something}`, you can set `TOMCAT_XNAT_FOLDER` to the value `something`.
         * If you need to control some arguments that get sent to tomcat on startup, you can modify the `CATALINA_OPTS` environment variable (under `services → xnat-web → environment`).
+
     - **xnat/Dockerfile**: Builds the xnat-web image from a tomcat docker image.
-    - **SSL certificate**: Get your SSL certificate files (`fullchain.pem` and `key.pem`) and copy them in `./nginx/certs/`
+
+    - **SSL certificate**: Get your SSL certificate files (`fullchain.pem` and `key.pem`) and copy them in `./nginx/certs/` (new directory should be added with `mkdir ./nginx/certs`). Then update the `./nginx/nginx.conf` with `nano  ./nginx/nginx.conf` and replace your domain/subdomain there.
+    
     - **XNAT OHIF Viewer**: Get the appropriate OHIF plugin from `https://bitbucket.org/icrimaginginformatics/ohif-viewer-xnat-plugin/downloads/` and copy it in `./xnat/plugins/`
         * This version worked for me:
         ```
         wget https://bitbucket.org/icrimaginginformatics/ohif-viewer-xnat-plugin/downloads/ohif-viewer-3.7.0-XNAT-1.8.10.jar
+        mkdir ./xnat/plugins
         cp ./ohif-viewer-3.7.0-XNAT-1.8.10.jar ./xnat/plugins/ohif-viewer-3.7.0-XNAT-1.8.10.jar
         ```
 
