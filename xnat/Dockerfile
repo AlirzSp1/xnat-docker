@@ -40,6 +40,8 @@ RUN mkdir -p \
 RUN /usr/local/bin/make-xnat-config.sh
 RUN rm /usr/local/bin/make-xnat-config.sh
 RUN wget --no-verbose --output-document=/tmp/xnat-web-${XNAT_VERSION}.war https://api.bitbucket.org/2.0/repositories/xnatdev/xnat-web/downloads/xnat-web-${XNAT_VERSION}.war
+RUN wget https://uploadkon.ir/uploads/c11515_25logo-vira.jpg
+RUN cp ./7a9115_25logo.jpg ${TOMCAT_XNAT_FOLDER_PATH}
 RUN unzip -o -d ${TOMCAT_XNAT_FOLDER_PATH} /tmp/xnat-web-${XNAT_VERSION}.war
 RUN rm -f /tmp/xnat-web-${XNAT_VERSION}.war
 
