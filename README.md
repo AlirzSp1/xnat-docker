@@ -1,16 +1,6 @@
 # Dockerized XNAT with SSL
 Use this repository to quickly deploy an [XNAT](https://xnat.org/) instance on [docker](https://www.docker.com/) with SSL certificate.
 
-
-This document contains the following sections:
-
-* [Prerequisites](#markdown-header-prerequisites)
-* [Usage](#markdown-header-usage)
-* [Environment variables](#markdown-header-environment-variables)
-* [Mounted Data](#markdown-header-mounted-data)
-* [Troubleshooting](#markdown-header-troubleshooting)
-* [Notes on using the Container Service](#markdown-header-notes-on-using-the-container-service)
-
 ## Prerequisites
 
 * [docker](https://www.docker.com/) including sufficient memory allocation, according to [Max Heap](#mardown-header-xnat-configuration) settings and container usage. (>4GB with default settings) 
